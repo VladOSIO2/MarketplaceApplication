@@ -104,4 +104,27 @@ public class DBEmulator {
             purchasedProducts.removeIf(i -> Objects.equals(i, product));
         }
     }
+
+    public static String getUsersAsString() {
+        if (users.isEmpty()) {
+            return "User list is empty";
+        }
+        StringBuilder sb = new StringBuilder("Users in database: " + users.size());
+        for (User user : users) {
+            sb.append(user.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+
+    public static String getProductsAsString() {
+        if (products.isEmpty()) {
+            return "Product list is empty";
+        }
+        StringBuilder sb = new StringBuilder("Products in database: " + products.size());
+        for (Product product : products) {
+            sb.append(product.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }
