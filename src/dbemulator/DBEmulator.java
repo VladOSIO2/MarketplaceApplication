@@ -20,58 +20,67 @@ public class DBEmulator {
     private static int nextProductID = 1;
     private static int nextUserID = 1;
 
-    public static void addProduct(String name, BigDecimal price) {
-        if (name == null || name.isBlank()) {
-            return;
+    public static String addProduct(String name, BigDecimal price) {
+        if (Util.isInvalidString(name)) {
+            return "Invalid name input!";
         }
         if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
-            return;
+            return "Price must be greater than 0!";
         }
 
-        products.add(new Product(nextProductID++, name, price));
+        products.add(new Product(nextProductID, name, price));
+        return "Added product with ID: " + nextProductID++;
     }
 
 
-    public static void addUser(String firstName, String lastName, BigDecimal money) {
-        if (Util.isInvalidString(firstName)) {
-            return;
-        }
-        if (Util.isInvalidString(lastName)) {
-            return;
+    public static String addUser(String firstName, String lastName, BigDecimal money) {
+        if (Util.isInvalidString(firstName)
+                || Util.isInvalidString(lastName)) {
+            return "Invalid name input!";
         }
 
         if (Util.isInvalidMoneyAmount(money)) {
-            return;
+            return "Amount of user's money should be positive!";
         }
 
-        users.add(new User(nextUserID++, firstName, lastName, money));
+        users.add(new User(nextUserID, firstName, lastName, money));
+        return "added user with ID: " + nextUserID++;
     }
 
-    public static void addPurchase(int userID, int productID) {
+    public static String addPurchase(int userID, int productID) {
         int userIndex = getUserIndex(userID);
         if (userIndex == -1) {
-            return;
+            return "No such user with ID: " + userID;
         }
 
-        int productIndex = getProductIndex(userID);
+        int productIndex = getProductIndex(productID);
         if (productIndex == -1) {
-            return;
+            return "No such product with ID: " + productID;
         }
+
+        User user = users.get(userIndex);
+        Product product = products.get(productIndex);
+        if (!user.hasMoneyAmount(product.price())) {
+            return "user %d doesn't have enough money to buy product %d"
+                    .formatted(user.getId(), product.id());
+        }
+
         /*
         adding a product to user's purchase list
         adding a user to a map if it's user's first purchase
          */
-        User user = users.get(userIndex);
-        Product product = products.get(productIndex);
         if (!purchasesMap.containsKey(user)) {
             purchasesMap.put(user, new ArrayList<>());
         }
         purchasesMap.get(user).add(product);
+        return "for user %d (%s): added purchase of product %d (%s)."
+                .formatted(userID, user.getFirstName() + " " + user.getLastName(),
+                        productID, product.name());
     }
 
     private static int getUserIndex(int userID) {
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).id() == userID) {
+            if (users.get(i).getId() == userID) {
                 return i;
             }
         }
@@ -91,10 +100,10 @@ public class DBEmulator {
     deletes product with ID from input
     from the products list & purchases mpa
      */
-    public static void deleteProductByID(int productID) {
+    public static String deleteProductByID(int productID) {
         int productIndex = getProductIndex(productID);
         if (productIndex == -1) {
-            return;
+            return "No such product with ID: " + productID;
         }
         Product product = products.get(getProductIndex(productID));
         products.remove(product);
@@ -103,6 +112,7 @@ public class DBEmulator {
             //in case one user bought one product many times
             purchasedProducts.removeIf(i -> Objects.equals(i, product));
         }
+        return "Deleted product with ID: " + productID;
     }
 
     public static String getUsersAsString() {

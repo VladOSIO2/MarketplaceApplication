@@ -15,12 +15,14 @@ public class User {
         this.moneyAmount = moneyAmount;
     }
 
-    public boolean spendMoney(BigDecimal moneyToSpend) {
-        boolean hasMoneyAmount = moneyAmount.compareTo(moneyToSpend) >= 0;
-        if (hasMoneyAmount) {
+    public boolean hasMoneyAmount(BigDecimal moneyToSpend) {
+        return moneyAmount.compareTo(moneyToSpend) >= 0;
+    }
+
+    public void spendMoney(BigDecimal moneyToSpend) {
+        if (hasMoneyAmount(moneyToSpend)) {
             moneyAmount = moneyAmount.subtract(moneyToSpend);
         }
-        return hasMoneyAmount;
     }
 
     public int getId() {
