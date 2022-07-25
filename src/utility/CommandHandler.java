@@ -22,6 +22,10 @@ public class CommandHandler {
     \tcreates a new product with corresponding NAME & PRICE
     /delete_product <PRODUCT_ID>
     \tdeletes product with PRODUCT_ID from the database
+    /users_bought <PRODUCT_ID>
+    \tshows the list of users who bought the product with PRODUCT_ID id
+    /products_bought <USER_ID>
+    \tshows products purchased by user with USER_ID id
     """;
 
     public static String handle(String command) {
@@ -38,6 +42,8 @@ public class CommandHandler {
                 case "/add_user" -> handleAddUser(args);
                 case "/add_product" -> handleAddProduct(args);
                 case "/delete_product" -> handleDeleteProduct(args);
+                case "/users_bought" -> handleUsersBought(args);
+                case "/products_bought" -> handleProductsBought(args);
                 default -> "Unknown command: " + args[0];
             };
         } catch (NumberFormatException e) {
@@ -81,5 +87,19 @@ public class CommandHandler {
             return NOT_ENOUGH_ARGS_MSG;
         }
         return DBEmulator.deleteProductByID(Integer.parseInt(args[1]));
+    }
+
+    private static String handleUsersBought(String[] args) {
+        if (args.length < 2) {
+            return NOT_ENOUGH_ARGS_MSG;
+        }
+        return DBEmulator.getUsersBoughtProduct(Integer.parseInt(args[1]));
+    }
+
+    private static String handleProductsBought(String[] args) {
+        if (args.length < 2) {
+            return NOT_ENOUGH_ARGS_MSG;
+        }
+        return DBEmulator.getProductsBoughtByUser(Integer.parseInt(args[1]));
     }
 }

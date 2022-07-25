@@ -73,6 +73,7 @@ public class DBEmulator {
             purchasesMap.put(user, new ArrayList<>());
         }
         purchasesMap.get(user).add(product);
+        user.spendMoney(product.price());
         return "for user %d (%s): added purchase of product %d (%s)."
                 .formatted(userID, user.getFirstName() + " " + user.getLastName(),
                         productID, product.name());
@@ -119,11 +120,7 @@ public class DBEmulator {
         if (users.isEmpty()) {
             return "User list is empty";
         }
-        StringBuilder sb = new StringBuilder("Users in database: " + users.size());
-        for (User user : users) {
-            sb.append(user.toString()).append("\n");
-        }
-        return sb.toString();
+        return "Users in database:\n" + Util.listJoin("\n", users);
     }
 
 
@@ -131,10 +128,28 @@ public class DBEmulator {
         if (products.isEmpty()) {
             return "Product list is empty";
         }
-        StringBuilder sb = new StringBuilder("Products in database: " + products.size());
-        for (Product product : products) {
-            sb.append(product.toString()).append("\n");
+        return "Products in database:\n" +
+                Util.listJoin("\n", products);
+    }
+
+    public static String getUsersBoughtProduct(int productID) {
+        List<User> userList = new ArrayList<>();
+        for (User user : purchasesMap.keySet()) {
+            boolean hasProduct = purchasesMap.get(user).stream()
+                    .anyMatch(product -> product.id() == productID);
+            if (hasProduct) {
+                userList.add(user);
+            }
         }
-        return sb.toString();
+        return Util.listJoin("\n", userList);
+    }
+
+    public static String getProductsBoughtByUser(int userID) {
+        int userIndex = getUserIndex(userID);
+        if (userIndex == -1) {
+            return "";
+        }
+        User user = users.get(userIndex);
+        return Util.listJoin("\n", purchasesMap.get(user));
     }
 }
