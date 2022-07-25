@@ -21,4 +21,7 @@ List of currently available commands:
     	creates a new product with corresponding NAME & PRICE
     /delete_product <PRODUCT_ID>
     	deletes product with PRODUCT_ID from the database
-        
+    /users_bought <PRODUCT_ID>
+    	shows the list of users who bought the product with PRODUCT_ID id
+    /products_bought <USER_ID>
+    	shows products purchased by user with USER_ID id
