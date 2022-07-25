@@ -40,4 +40,14 @@ public class User {
     public BigDecimal getMoneyAmount() {
         return moneyAmount;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", moneyAmount=" + moneyAmount +
+                '}';
+    }
 }
